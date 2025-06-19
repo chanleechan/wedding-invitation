@@ -3,6 +3,7 @@ import './App.css';
 import './css/thema.css'
 import CoverPage from './components/CoverPage';
 import PhotoGallery from './components/PhotoGallery';
+import Main from '../src/images/main4.jpg';
 import KakaoMap from './components/KakaoMap';
 
 function App() {
@@ -15,7 +16,7 @@ function App() {
         <div className="container">
           {/* 기존 청첩장 내용 */}
           <header className="hero">
-            <img src="/images/main4.jpg" alt="커플사진" className="couple-photo" />
+            <img src={Main} alt="커플사진" className="couple-photo" />
             <h1>홍길동 & 이순신</h1>
             <p className="date">2025년 10월 5일 (일) 오후 1시</p>
             <p className="venue">서울 강남구 웨딩홀 3층</p>
