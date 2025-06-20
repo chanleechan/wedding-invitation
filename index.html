@@ -1,17 +1,180 @@
-<!doctype html>
-<html lang="en">
-  <head>
-  <!-- public/index.html의 <head> 또는 </body> 위에 추가 -->
-  <script type="text/javascript" src="//dapi.kakao.com/v2/maps/sdk.js?appkey=c5dd0cba2f011073b8a031712328e85d"></script>
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>홍길동 & 이순신의 결혼식</title>
 
+    <!-- 카카오톡 공유 시 미리보기 정보 (OG 태그) -->
+    <meta property="og:url" content="https://your-wedding-url.netlify.app">
+    <meta property="og:title" content="홍길동 & 이순신의 결혼식에 초대합니다">
+    <meta property="og:description" content="2025년 10월 5일, 저희 두 사람의 새로운 시작을 함께 축복해주세요.">
+    <meta property="og:image" content="src/images/main4.jpg">
 
-    <meta charset="UTF-8" />
-    <link rel="icon" type="image/svg+xml" href="/vite.svg" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Vite + React</title>
-  </head>
-  <body>
-    <div id="root"></div>
-    <script type="module" src="/src/main.jsx"></script>
-  </body>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;700&family=Lato:wght@300;400;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css">
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <!-- 1. Full-screen Visual -->
+    <div class="main-visual">
+        <div class="scroll-down-prompt">
+            <span>Scroll Down</span>
+            <div class="mouse">
+                <div class="scroller"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 2. Main Content -->
+    <div id="mainContent" class="container">
+        <!-- 헤더 섹션 -->
+        <header class="hero card">
+            <h1>홍길동 & 이순신</h1>
+            <p class="date">2025년 11월 29일 (토) 오후 1시</p>
+            <p class="venue">JK 아트컨벤션 엠버루체홀</p>
+            <div class="d-day">
+                <p>두 사람의 결혼식이 <span id="d-day-counter"></span>일 남았습니다.</p>
+            </div>
+        </header>
+
+        <!-- 예식 날짜 달력 카드 -->
+        <section class="calendar card">
+            <h2>Wedding Day</h2>
+            <div class="calendar-widget">
+                <div class="calendar-header">2025년 11월</div>
+                <div class="calendar-body">
+                    <div class="calendar-row calendar-days">
+                        <span>일</span><span>월</span><span>화</span><span>수</span><span>목</span><span>금</span><span>토</span>
+                    </div>
+                    <div class="calendar-row">
+                        <span></span><span></span><span></span><span></span><span></span><span></span><span>1</span>
+                    </div>
+                    <div class="calendar-row">
+                        <span>2</span><span>3</span><span>4</span><span>5</span><span>6</span><span>7</span><span>8</span>
+                    </div>
+                    <div class="calendar-row">
+                        <span>9</span><span>10</span><span>11</span><span>12</span><span>13</span><span>14</span><span>15</span>
+                    </div>
+                    <div class="calendar-row">
+                        <span>16</span><span>17</span><span>18</span><span>19</span><span>20</span><span>21</span><span>22</span>
+                    </div>
+                    <div class="calendar-row">
+                        <span>23</span><span>24</span><span>25</span><span>26</span><span>27</span><span>28</span><span class="highlight">29</span>
+                    </div>
+                    <div class="calendar-row">
+                        <span>30</span><span></span><span></span><span></span><span></span><span></span><span></span>
+                    </div>
+                </div>
+            </div>
+            <div class="calendar-caption">2025년 11월 29일 (토) 오후 1시</div>
+        </section>
+
+        <!-- 인사말 섹션 -->
+        <section class="greeting card">
+            <h2>Our Story</h2>
+            <p>저희 두 사람이 새로운 시작을 하려 합니다.<br>축복해주시면 감사하겠습니다.</p>
+        </section>
+
+        <!-- 사진 갤러리 -->
+        <section class="gallery card">
+            <h2>Our Memories</h2>
+            <div class="swiper">
+                <div class="swiper-wrapper">
+                    <div class="swiper-slide">
+                        <img src="src/images/test1.jpg" alt="데이트 사진1" class="gallery-photo">
+                    </div>
+                    <div class="swiper-slide">
+                        <img src="src/images/test2.jpg" alt="데이트 사진2" class="gallery-photo">
+                    </div>
+                    <div class="swiper-slide">
+                        <img src="src/images/test3.jpg" alt="여행 사진" class="gallery-photo">
+                    </div>
+                </div>
+                <div class="swiper-pagination"></div>
+                <div class="swiper-button-next"></div>
+                <div class="swiper-button-prev"></div>
+            </div>
+        </section>
+
+        <!-- 정보 섹션 -->
+        <section class="info card">
+            <h2>Information</h2>
+            <h3>오시는 길</h3>
+            <div id="map" class="map-container"></div>
+            <div class="address-box">
+                <div class="address-text">서울특별시 강남구 테헤란로 123, JK아트컨벤션 3층</div>
+                <a href="https://map.kakao.com/link/map/JK아트컨벤션,37.517643,126.900084" target="_blank" class="kakao-map-btn">카카오맵에서 보기</a>
+            </div>
+
+            <!-- 교통 안내 추가 -->
+            <div class="transport-info">
+                <h4>버스</h4>
+                <ul>
+                    <li><strong>문래역 정류장 하차</strong><br>
+                        - 지선 : 6211, 6625<br>
+                        - 간선 : 641<br>
+                        - 마을버스 : 영등포 12
+                    </li>
+                    <li><strong>문래 주신센터 / 영일시장.록스 정류장 하차</strong><br>
+                        - 마을버스 : 영등포 05
+                    </li>
+                    <li><strong>벽산메가트리움 APT 정류장 하차</strong><br>
+                        - 지선버스 : 6515
+                    </li>
+                </ul>
+                <h4>지하철</h4>
+                <ul>
+                    <li><strong>2호선 문래역 하차</strong></li>
+                    <li>- 셔틀버스 : 4번출구(뒷쪽) 셔틀운행</li>
+                    <li>- 도보이용 : 5번출구에서 전방직진 300M</li>
+                </ul>
+            </div>
+
+            <h3>연락처</h3>
+            <p><strong>신랑</strong> 010-1234-5678<br><strong>신부</strong> 010-9876-5432</p>
+        </section>
+
+        <!-- 마음 전하는 곳 카드 -->
+        <section class="account-card card">
+            <h2>마음 전하실 곳</h2>
+            <div class="account-ment">
+                마음만으로도 충분히 감사드립니다.<br>
+                혹시 전하고 싶은 마음이 있으시다면<br>
+                아래에 작은 안내를 남겨둡니다.
+            </div>
+            <div class="account-tab-box">
+                <button class="account-tab active" id="groom-tab">신랑측</button>
+                <button class="account-tab" id="bride-tab">신부측</button>
+            </div>
+            <div class="account-confirm-box">
+                <button class="account-confirm-btn" id="account-confirm-btn">확인하기</button>
+            </div>
+            <div class="account-list" id="account-list" style="display:none;"></div>
+        </section>
+
+        <!-- 닫는 글 카드 -->
+        <section class="closing card">
+            <h2>With Love</h2>
+            <p>소중한 걸음 하시어<br>저희 두 사람의 앞날을 축복해주시면<br>더 없는 기쁨으로 간직하겠습니다.</p>
+            <p class="names">신랑 홍길동 & 신부 이순신 드림</p>
+        </section>
+
+        <!-- 공유하기 카드 -->
+        <section class="share card">
+            <h2>Share the Love</h2>
+            <div class="share-buttons">
+                <button id="copy-link-btn" class="share-btn">🔗 링크 복사하기</button>
+            </div>
+        </section>
+    </div>
+
+    <!-- 카카오맵 API -->
+    <script type="text/javascript" src="//dapi.kakao.com/v2/maps/sdk.js?appkey=c5dd0cba2f011073b8a031712328e85d&libraries=services,clusterer,drawing"></script>
+    <script src="https://t1.kakaocdn.net/kakao_js_sdk/2.7.1/kakao.min.js" integrity="sha384-dPuE23cCWM1P4CE3LswMA5U_pUAbCSGFrLSgrRGVDdsRXERwXR5G4VUDENCQfnG3" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
+    <script src="script.js"></script>
+</body>
 </html>

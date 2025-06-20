@@ -1,13 +1,90 @@
-# React + Vite
+# 결혼 청첩장
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+순수 HTML, CSS, JavaScript로 제작된 반응형 웹 청첩장입니다.
 
-Currently, two official plugins are available:
+## 특징
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+- 🎨 **반응형 디자인**: 모바일과 데스크톱에서 모두 최적화된 화면
+- 📱 **터치 친화적**: 모바일에서도 부드러운 사용자 경험
+- 🗺️ **카카오맵 연동**: 결혼식장 위치를 지도로 표시
+- 📸 **사진 갤러리**: Swiper를 활용한 슬라이드 갤러리
+- ✨ **부드러운 애니메이션**: 페이드인/아웃 효과와 스크롤 애니메이션
 
-## Expanding the ESLint configuration
+## 파일 구조
 
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
-# wedding-invitation
+```
+my-wedding-invitation/
+├── index.html          # 메인 HTML 파일
+├── styles.css          # 스타일시트
+├── script.js           # JavaScript 기능
+├── src/
+│   └── images/         # 이미지 파일들
+│       ├── cover_page.png
+│       ├── main4.jpg
+│       ├── test1.jpg
+│       ├── test2.jpg
+│       └── test3.jpg
+└── README.md
+```
+
+## 사용법
+
+1. **로컬에서 실행**: `index.html` 파일을 웹 브라우저에서 직접 열기
+2. **서버 배포**: 웹 서버에 파일들을 업로드하여 배포
+
+## 주요 기능
+
+### 커버 페이지
+- 클릭하면 메인 컨텐츠로 전환
+- 페이드인 애니메이션 효과
+
+### 메인 컨텐츠
+- **헤더**: 커플 사진, 이름, 날짜, 장소
+- **인사말**: 결혼 소개 메시지
+- **사진 갤러리**: Swiper 슬라이더로 사진 전시
+- **정보**: 연락처, 계좌번호, 지도
+
+### 카카오맵
+- 결혼식장 위치 표시
+- 마커와 인포윈도우 포함
+- 큰지도보기 링크 제공
+
+## 커스터마이징
+
+### 개인정보 수정
+`index.html` 파일에서 다음 정보를 수정하세요:
+- 신랑/신부 이름
+- 결혼 날짜와 시간
+- 결혼식장 주소
+- 연락처
+- 계좌번호
+
+### 이미지 교체
+`src/images/` 폴더의 이미지들을 원하는 사진으로 교체:
+- `cover_page.png`: 커버 페이지 이미지
+- `main4.jpg`: 메인 커플 사진
+- `test1.jpg`, `test2.jpg`, `test3.jpg`: 갤러리 사진들
+
+### 카카오맵 설정
+1. [카카오 개발자 센터](https://developers.kakao.com/)에서 API 키 발급
+2. `index.html`의 `YOUR_KAKAO_MAP_API_KEY` 부분을 실제 API 키로 교체
+3. `script.js`의 좌표값을 실제 결혼식장 위치로 수정
+
+## 기술 스택
+
+- **HTML5**: 시맨틱 마크업
+- **CSS3**: 반응형 디자인, 애니메이션
+- **JavaScript (ES6+)**: 인터랙션, 카카오맵 API
+- **Swiper.js**: 이미지 슬라이더
+- **카카오맵 API**: 지도 서비스
+
+## 브라우저 지원
+
+- Chrome (권장)
+- Firefox
+- Safari
+- Edge
+
+## 라이선스
+
+이 프로젝트는 개인적인 용도로 자유롭게 사용하실 수 있습니다.
