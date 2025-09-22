@@ -38,6 +38,9 @@ document.addEventListener('DOMContentLoaded', function() {
 
     // 계좌번호 탭/확인하기 기능 (신랑측/신부측)
     initAccountButtons();
+
+    // 갤러리 이미지 다운스케일 및 지연 로드
+    initGalleryImageOptimization();
 });
 
 // 카카오맵 초기화 함수
@@ -114,21 +117,6 @@ function initDDayCounter() {
     }
 }
 
-// 공유 기능 초기화 함수
-function initShareButtons() {
-    const copyLinkBtn = document.getElementById('copy-link-btn');
-
-    // 1. 링크 복사 기능
-    copyLinkBtn.addEventListener('click', () => {
-        navigator.clipboard.writeText(window.location.href).then(() => {
-            alert('청첩장 링크가 복사되었습니다!');
-        }).catch(err => {
-            console.error('링크 복사에 실패했습니다.', err);
-            alert('링크 복사에 실패했습니다. 다시 시도해주세요.');
-        });
-    });
-}
-
 // 스크롤 애니메이션 초기화 함수
 function initScrollReveal() {
     const observerOptions = {
@@ -164,14 +152,14 @@ function initAccountButtons() {
     // 계좌 정보
     const accounts = {
         groom: [
-            { label: '신랑', value: '국민 123456-78-91011' },
-            { label: '아버지', value: '국민 111111-11-11111' },
-            { label: '어머니', value: '신한 222222-22-22222' },
+            { label: '신랑 이찬희', value: '신한 110-491-234884' },
+            { label: '아버지 이상기', value: '국민 111111-11-11111' },
+            { label: '어머니 김영희', value: '신한 222222-22-22222' },
         ],
         bride: [
-            { label: '신부', value: '신한 987654-32-10987' },
-            { label: '아버지', value: '농협 333333-33-33333' },
-            { label: '어머니', value: '우리 444444-44-44444' },
+            { label: '신부 이채연 (율리아나)', value: '토스 1000-4916-10987' },
+            { label: '아버지 이원규 (바오로)', value: '농협 333333-33-33333' },
+            { label: '어머니 김숙희 (빅토리아)', value: '우리 444444-44-44444' },
         ]
     };
 
@@ -181,6 +169,24 @@ function initAccountButtons() {
             const div = document.createElement('div');
             div.className = 'account-item';
             div.innerHTML = `<span class="account-label">${acc.label}</span><span class="account-value">${acc.value}</span>`;
+
+            // 은행 식별 및 폰트 클래스 적용
+            const valueSpan = div.querySelector('.account-value');
+            const bankName = (acc.value.split(' ')[0] || '').trim();
+            const bankClassMap = {
+                '국민': 'bank-kb',
+                'KB': 'bank-kb',
+                '신한': 'bank-shinhan',
+                '농협': 'bank-nh',
+                'NH': 'bank-nh',
+                '우리': 'bank-woori',
+                '토스': 'bank-toss',
+            };
+            const bankClass = bankClassMap[bankName];
+            if (bankClass) {
+                valueSpan.classList.add(bankClass);
+            }
+
             accountList.appendChild(div);
         });
     }
@@ -213,3 +219,85 @@ function initAccountButtons() {
     // 초기 상태
     setTab('groom');
 } 
+
+// 갤러리 이미지 다운스케일 및 지연 로드 (클라이언트 측)
+function initGalleryImageOptimization() {
+    const MAX_WIDTH = 1600; // px
+    const MAX_HEIGHT = 1600; // px
+    const QUALITY = 0.82; // webp 품질
+
+    const images = document.querySelectorAll('.gallery-photo[data-src]');
+
+    // 파일 프로토콜 또는 필수 API 미지원 시 즉시 원본 사용
+    const isFileProtocol = window.location.protocol === 'file:';
+    const canUseBitmap = typeof createImageBitmap === 'function';
+    const canUseCanvas = !!document.createElement('canvas').getContext;
+
+    if (isFileProtocol || !canUseBitmap || !canUseCanvas) {
+        images.forEach(img => {
+            const src = img.getAttribute('data-src');
+            if (src) {
+                img.src = src;
+                img.removeAttribute('data-src');
+            }
+        });
+        return;
+    }
+
+    const loadAndDownscale = async (img) => {
+        const src = img.getAttribute('src');
+        try {
+            const bitmap = await fetch(src)
+                .then(r => r.blob())
+                .then(createImageBitmap);
+
+            const { width, height } = bitmap;
+            let targetW = width;
+            let targetH = height;
+
+            const scale = Math.min(MAX_WIDTH / width, MAX_HEIGHT / height, 1);
+            targetW = Math.round(width * scale);
+            targetH = Math.round(height * scale);
+
+            const canvas = document.createElement('canvas');
+            canvas.width = targetW;
+            canvas.height = targetH;
+            const ctx = canvas.getContext('2d');
+            ctx.drawImage(bitmap, 0, 0, targetW, targetH);
+
+            if (canvas.toDataURL) {
+                img.src = canvas.toDataURL('image/webp', QUALITY);
+            } else {
+                img.src = src; // fallback
+            }
+            img.removeAttribute('data-src');
+        } catch (e) {
+            console.error('이미지 최적화 실패:', e);
+            img.src = src; // 실패 시 원본 사용
+            img.removeAttribute('data-src');
+        }
+    };
+
+    const observer = new IntersectionObserver((entries, ob) => {
+        entries.forEach(entry => {
+            if (entry.isIntersecting) {
+                const img = entry.target;
+                ob.unobserve(img);
+                loadAndDownscale(img);
+            }
+        });
+    }, { rootMargin: '200px 0px', threshold: 0.01 });
+
+    images.forEach(img => observer.observe(img));
+
+    // 안전장치: 1.5초 후에도 남아있으면 원본으로 세팅
+    setTimeout(() => {
+        document.querySelectorAll('.gallery-photo[data-src]').forEach(img => {
+            const src = img.getAttribute('data-src');
+            if (src) {
+                img.src = src;
+                img.removeAttribute('data-src');
+            }
+        });
+    }, 1500);
+}
