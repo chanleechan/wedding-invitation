@@ -33,8 +33,10 @@ document.addEventListener('DOMContentLoaded', function() {
     // D-Day 카운터 초기화
     initDDayCounter();
 
-    // 공유 기능 초기화
-    initShareButtons();
+    // 공유 기능 초기화 (안전 가드)
+    if (typeof initShareButtons === 'function') {
+        initShareButtons();
+    }
 
     // 계좌번호 탭/확인하기 기능 (신랑측/신부측)
     initAccountButtons();
@@ -140,6 +142,33 @@ function initScrollReveal() {
     });
 }
 
+// 공유 기능 초기화 함수 (복원/안전)
+// function initShareButtons() {
+//     const copyLinkBtn = document.getElementById('copy-link-btn');
+//     if (!copyLinkBtn) return;
+//     copyLinkBtn.addEventListener('click', () => {
+//         const url = window.location.href;
+//         if (navigator.clipboard && navigator.clipboard.writeText) {
+//             navigator.clipboard.writeText(url).then(() => {
+//                 alert('청첩장 링크가 복사되었습니다!');
+//             }).catch(() => {
+//                 fallbackCopy(url);
+//             });
+//         } else {
+//             fallbackCopy(url);
+//         }
+//     });
+
+//     function fallbackCopy(text) {
+//         const temp = document.createElement('textarea');
+//         temp.value = text;
+//         document.body.appendChild(temp);
+//         temp.select();
+//         try { document.execCommand('copy'); alert('청첩장 링크가 복사되었습니다!'); } catch {}
+//         document.body.removeChild(temp);
+//     }
+// }
+
 // 계좌번호 탭/확인하기 기능 (신랑측/신부측)
 function initAccountButtons() {
     const groomTab = document.getElementById('groom-tab');
@@ -152,14 +181,14 @@ function initAccountButtons() {
     // 계좌 정보
     const accounts = {
         groom: [
-            { label: '신랑 이찬희', value: '신한 110-491-234884' },
-            { label: '아버지 이상기', value: '국민 111111-11-11111' },
-            { label: '어머니 김영희', value: '신한 222222-22-22222' },
+            { label: '신랑 이찬희', value: '신한 110-491-234884(이찬희)' },
+            { label: '아버지 이상기', value: '우리 1002-841-114082(이상기)' },
+            { label: '어머니 김영희', value: '농협 216027-52-085918(김영희)' },
         ],
         bride: [
-            { label: '신부 이채연 (율리아나)', value: '토스 1000-4916-10987' },
-            { label: '아버지 이원규 (바오로)', value: '농협 333333-33-33333' },
-            { label: '어머니 김숙희 (빅토리아)', value: '우리 444444-44-44444' },
+            { label: '신부 이채연 (율리아나)', value: '토스 1000-4916-10987(이채연)' },
+            { label: '아버지 이원규 (바오로)', value: '신한 110-145-805640(김숙희)' },
+            { label: '어머니 김숙희 (빅토리아)', value: '신한 110-145-805640(김숙희)' },
         ]
     };
 
@@ -168,7 +197,8 @@ function initAccountButtons() {
         accounts[tab].forEach(acc => {
             const div = document.createElement('div');
             div.className = 'account-item';
-            div.innerHTML = `<span class="account-label">${acc.label}</span><span class="account-value">${acc.value}</span>`;
+            div.innerHTML = `<span class="account-label">${acc.label}</span>
+                             <span class="account-value" data-account="${acc.value}" role="button" tabindex="0">${acc.value}</span>`;
 
             // 은행 식별 및 폰트 클래스 적용
             const valueSpan = div.querySelector('.account-value');
@@ -210,11 +240,49 @@ function initAccountButtons() {
             confirmBtn.textContent = '확인하기';
         } else {
             renderAccounts(currentTab);
-            accountList.style.display = 'block';
+            accountList.style.display = 'flex';
             shown = true;
             confirmBtn.textContent = '닫기';
         }
     });
+
+    // // 계좌번호 클릭/버튼 클릭 시 복사 기능
+    // accountList.addEventListener('click', (e) => {
+    //     const target = e.target.closest('.account-copy-btn, .account-value');
+    //     if (!target) return;
+    //     const accountText = target.getAttribute('data-account') || target.textContent.trim();
+    //     if (!accountText) return;
+    //     navigator.clipboard.writeText(accountText).then(() => {
+    //         const btn = e.target.closest('.account-copy-btn');
+    //         if (btn) {
+    //             const original = btn.textContent;
+    //             btn.classList.add('copied');
+    //             btn.textContent = '복사됨';
+    //             setTimeout(() => { btn.classList.remove('copied'); btn.textContent = original; }, 1200);
+    //         } else {
+    //             alert('계좌번호가 복사되었습니다.');
+    //         }
+    //     }).catch(() => {
+    //         // 폴백: 임시 입력으로 복사
+    //         const temp = document.createElement('textarea');
+    //         temp.value = accountText;
+    //         document.body.appendChild(temp);
+    //         temp.select();
+    //         try {
+    //             document.execCommand('copy');
+    //             const btn = e.target.closest('.account-copy-btn');
+    //             if (btn) {
+    //                 const original = btn.textContent;
+    //                 btn.classList.add('copied');
+    //                 btn.textContent = '복사됨';
+    //                 setTimeout(() => { btn.classList.remove('copied'); btn.textContent = original; }, 1200);
+    //             } else {
+    //                 alert('계좌번호가 복사되었습니다.');
+    //             }
+    //         } catch {}
+    //         document.body.removeChild(temp);
+    //     });
+    // });
 
     // 초기 상태
     setTab('groom');
@@ -245,7 +313,7 @@ function initGalleryImageOptimization() {
     }
 
     const loadAndDownscale = async (img) => {
-        const src = img.getAttribute('src');
+        const src = img.getAttribute('data-src') || img.getAttribute('src');
         try {
             const bitmap = await fetch(src)
                 .then(r => r.blob())
